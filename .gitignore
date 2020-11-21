@@ -1,0 +1,4 @@
+data/
+efficientnet-b5-b6417697.pth
+*.pyc
+*.jpg
