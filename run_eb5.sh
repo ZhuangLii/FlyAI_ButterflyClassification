@@ -11,8 +11,10 @@ python main.py -c efficientnetb5.yaml SOLVER.BASE_LR 0.01 SOLVER.WARMUP_EPOCHS 2
 python main.py -c efficientnetb5.yaml SOLVER.BASE_LR 0.01 SOLVER.WARMUP_EPOCHS 4
 python main.py -c efficientnetb5.yaml SOLVER.BASE_LR 0.01 SOLVER.WARMUP_EPOCHS 6
 python main.py -c efficientnetb5.yaml SOLVER.BASE_LR 0.01 SOLVER.WARMUP_EPOCHS 8
+# best
 python main.py -c efficientnetb5.yaml SOLVER.BASE_LR 0.01 SOLVER.WARMUP_EPOCHS 10
 echo epoch
+# best
 python main.py -c efficientnetb5.yaml SOLVER.BASE_LR 0.01 SOLVER.MAX_EPOCHS 40
 python main.py -c efficientnetb5.yaml SOLVER.BASE_LR 0.01 SOLVER.MAX_EPOCHS 50
 python main.py -c efficientnetb5.yaml SOLVER.BASE_LR 0.01 SOLVER.MAX_EPOCHS 60

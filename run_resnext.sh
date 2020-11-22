@@ -45,6 +45,5 @@
 # python main.py -c se_resnext.yaml SOLVER.BASE_LR 0.001 INPUT.GRAY_RPO 0.05 SOLVER.IMS_PER_BATCH 64
 # python main.py -c se_resnext.yaml SOLVER.BASE_LR 0.001 INPUT.GRAY_RPO 0.1 SOLVER.IMS_PER_BATCH 64
 
-echo expirement 2
-
-python main.py -c se_resnext.yaml SOLVER.BASE_LR 0.001 SOLVER.IMS_PER_BATCH 64
+echo expirement 2 tmp best
+python main.py -c se_resnext.yaml SOLVER.BASE_LR 0.03 SOLVER.IMS_PER_BATCH 64 SOLVER.WARMUP_EPOCHS 8 SOLVER.MAX_EPOCHS 60 DATASETS.HARD_AUG simple INPUT.GRAY_RPO 0.05

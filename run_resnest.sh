@@ -10,6 +10,7 @@ echo learning warmup epoch
 python main.py -c resnest.yaml SOLVER.BASE_LR 0.01 SOLVER.WARMUP_EPOCHS 2 MODEL.DEVICE_ID '1'
 python main.py -c resnest.yaml SOLVER.BASE_LR 0.01 SOLVER.WARMUP_EPOCHS 4 MODEL.DEVICE_ID '1'
 python main.py -c resnest.yaml SOLVER.BASE_LR 0.01 SOLVER.WARMUP_EPOCHS 6 MODEL.DEVICE_ID '1'
+# best
 python main.py -c resnest.yaml SOLVER.BASE_LR 0.01 SOLVER.WARMUP_EPOCHS 8 MODEL.DEVICE_ID '1'
 python main.py -c resnest.yaml SOLVER.BASE_LR 0.01 SOLVER.WARMUP_EPOCHS 10 MODEL.DEVICE_ID '1'
 echo epoch
