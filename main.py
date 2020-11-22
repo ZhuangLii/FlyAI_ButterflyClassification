@@ -20,7 +20,7 @@ from libs.make_loss import make_loss
 from libs.make_optimizer import make_optimizer
 from libs.make_model import make_model
 from torch.optim import lr_scheduler
-from libs.warmup import WarmupMultiStepLR, GradualWarmupScheduler
+from libs.warmup import WarmupMultiStepLR, GradualWarmupScheduler, WarmupCosineLR
 from tensorboardX import SummaryWriter
 
 '''
@@ -73,12 +73,14 @@ class Main(FlyAI):
     '''
     项目中必须继承FlyAI类，否则线上运行会报错。
     '''
-    def __init__(self, logger):
+    def __init__(self, args, logger):
         print('main func init')
         set_seed(cfg.SOLVER.SEED)
         cfg.OUTPUT_DIR = MODEL_PATH
         cfg.DATASETS.ROOT_DIR = os.path.join(sys.path[0], 'data', 'input', DataID)
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(cfg.MODEL.DEVICE_ID)
         self.cfg = cfg
+        self.args = args
         self.logger = logger
 
     def download_data(self):
@@ -91,38 +93,49 @@ class Main(FlyAI):
         训练模型，必须实现此方法
         :return:
         '''
-        train_loader, valid_loader, num_class = make_dataloader(self.cfg)
-        model = make_model(self.cfg, num_class)
-        loss_func, center_criterion = make_loss(self.cfg, num_class)
-        optimizer, optimizer_center = make_optimizer(
-            cfg, model, center_criterion)
-        if cfg.SOLVER.TYPE == 'warmup':
-            scheduler = WarmupMultiStepLR(optimizer, self.cfg.SOLVER.STEPS, self.cfg.SOLVER.GAMMA,
-                                  self.cfg.SOLVER.WARMUP_FACTOR,
-                                  self.cfg.SOLVER.WARMUP_EPOCHS, self.cfg.SOLVER.WARMUP_METHOD)
-        elif cfg.SOLVER.TYPE == 'warmup_exp':
-            scheduler_exp = lr_scheduler.ExponentialLR(optimizer, gamma=0.85)
-            scheduler = GradualWarmupScheduler(
-                optimizer, multiplier=10, total_epoch=self.cfg.SOLVER.WARMUP_EPOCHS, after_scheduler=scheduler_exp)
-        if not os.path.exists(self.cfg.TBOUTPUT_DIR):
-            os.mkdir(self.cfg.TBOUTPUT_DIR)
-        writer = SummaryWriter(self.cfg.TBOUTPUT_DIR)
-        self.logger.info('start training')
-        train_val_fun(self.cfg, model, train_loader, valid_loader,loss_func, center_criterion, scheduler, optimizer, optimizer_center, writer, self.logger, val=cfg.IF_VAL) 
+        config_files = ['./configs/'+args.CONFIG]
+        for configs in config_files:
+            self.cfg.merge_from_file(configs)
+            cfg.merge_from_list(self.args.opts)
+            logger.info("Running with config:\n{}".format(self.cfg))
+            train_loader, valid_loader, num_class = make_dataloader(self.cfg)
+            model = make_model(self.cfg, num_class)
+            loss_func, center_criterion = make_loss(self.cfg, num_class)
+            optimizer, optimizer_center = make_optimizer(
+                cfg, model, center_criterion)
+            if cfg.SOLVER.TYPE == 'warmup':
+                scheduler = WarmupMultiStepLR(optimizer, self.cfg.SOLVER.STEPS, self.cfg.SOLVER.GAMMA,
+                                    self.cfg.SOLVER.WARMUP_FACTOR,
+                                    self.cfg.SOLVER.WARMUP_EPOCHS, self.cfg.SOLVER.WARMUP_METHOD)
+            elif cfg.SOLVER.TYPE == 'warmup_exp':
+                scheduler_exp = lr_scheduler.ExponentialLR(optimizer, gamma=0.85)
+                scheduler = GradualWarmupScheduler(
+                    optimizer, multiplier=10, total_epoch=self.cfg.SOLVER.WARMUP_EPOCHS, after_scheduler=scheduler_exp)
+            elif cfg.SOLVER.TYPE == 'warmup_cos':
+                scheduler = WarmupCosineLR(optimizer,
+                                            max_iters=cfg.SOLVER.MAX_EPOCHS,
+                                            warmup_factor= 0.001,
+                                            warmup_iters=cfg.SOLVER.WARMUP_EPOCHS
+                                        )
+            if not os.path.exists(self.cfg.TBOUTPUT_DIR):
+                os.mkdir(self.cfg.TBOUTPUT_DIR)
+            writer = SummaryWriter(self.cfg.TBOUTPUT_DIR, filename_suffix=cfg.MODEL.NAME)
+            self.logger.info('start training')
+            train_val_fun(self.cfg, model, train_loader, valid_loader,loss_func, center_criterion, scheduler, optimizer, optimizer_center, writer, self.logger, val=cfg.IF_VAL) 
+            torch.cuda.empty_cache()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Butterfly_CLS Training")
     parser.add_argument("-e", "--EPOCHS", default=20, type=int, help="train epochs")
     parser.add_argument("-b", "--BATCH", default=2, type=int, help="batch size")
+    parser.add_argument("-c", "--CONFIG", default='efficientb5.yaml', type=str, help="batch size")
     parser.add_argument("opts", help="Modify config options using the command-line", default=None,
                         nargs=argparse.REMAINDER)
 
     args = parser.parse_args()
-    cfg.merge_from_list(args.opts)
     logger = setup_logger("butterfly", './log')
     # cfg.freeze()
-    logger.info("Running with config:\n{}".format(cfg))
-    main = Main(logger)
+    main = Main(args, logger)
     main.download_data()
     main.train()

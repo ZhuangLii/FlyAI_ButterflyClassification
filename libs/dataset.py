@@ -13,6 +13,10 @@ class butterfly_dataset(Dataset):
         self.id_name_dict = dict()
         for i, line in enumerate(lines):
             self.name_id_dict[line.rstrip()] = i
+            if i == 199:
+                self.name_id_dict[line.rstrip()] = 197
+            elif i == 198:
+                self.name_id_dict[line.rstrip()] = 196
             self.id_name_dict[i] = line.rstrip()
         with open(join(img_root, 'train.csv'), 'r') as f:
             lines = f.readlines()

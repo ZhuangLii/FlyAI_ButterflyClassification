@@ -1,4 +1,6 @@
 data/
-efficientnet-b5-b6417697.pth
+libs/__pycache__/
+configs/__pycache__/
+log/
+*.pth
 *.pyc
-*.jpg

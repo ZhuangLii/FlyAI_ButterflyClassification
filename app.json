@@ -1,45 +1,45 @@
 {
-  "name":"ButterflyClassification",
-  "author":"flyai会员1605154585",
-  "description":"ButterflyClassification",
-  "topic":"图像分类",
+  "name":"ButterflyClassification", 
+  "author":"flyai会员1605154585", 
+  "description":"ButterflyClassification", 
+  "topic":"图像分类", 
   "model":{
     "input":{
       "columns":[
         {
-          "name":"image_path",
-          "type":"str",
+          "name":"image_path", 
+          "type":"str", 
           "sample":"image/172691.jpg"
         }
       ]
-    },
+    }, 
     "output":{
       "columns":[
         {
-          "name":"label",
-          "type":"str",
+          "name":"label", 
+          "type":"str", 
           "sample":"Loxura_atymnus"
         }
       ]
     }
-  },
+  }, 
   "data":{
     "source":[
       {
-        "id":"ButterflyClassification",
-        "name":"200种蝴蝶分类",
-        "source":"数据来源网络"
+        "id":"ButterflyClassification", 
+        "name":"ButterflyClassification", 
+        "source":"ButterflyClassification"
       }
     ]
-  },
+  }, 
   "project":{
-    "id":"ButterflyClassification",
-    "language":"Python3",
-    "algorithm":"ResNet",
-    "framework":"PyTorch",
+    "id":"ButterflyClassification", 
+    "language":"Python3", 
+    "algorithm":"ResNet", 
+    "framework":"PyTorch", 
     "train":{
       "file":"main.py"
-    },
+    }, 
     "prediction":{
       "file":"prediction.py"
     }
