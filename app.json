@@ -1,6 +1,6 @@
 {
   "name":"ButterflyClassification", 
-  "author":"flyai会员1605154585", 
+  "author":"Like", 
   "description":"ButterflyClassification", 
   "topic":"图像分类", 
   "model":{
@@ -9,7 +9,7 @@
         {
           "name":"image_path", 
           "type":"str", 
-          "sample":"image/172691.jpg"
+          "sample":"./data/input/ButterflyClassification/image/172691.jpg"
         }
       ]
     }, 
@@ -27,8 +27,8 @@
     "source":[
       {
         "id":"ButterflyClassification", 
-        "name":"200种蝴蝶分类", 
-        "source":"数据来源网络"
+        "name":"ButterflyClassification", 
+        "source":"ButterflyClassification"
       }
     ]
   }, 
