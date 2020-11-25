@@ -1,6 +1,6 @@
 data/
-*.pth
 libs/__pycache__/
 configs/__pycache__/
 log/
+*.pth
 *.pyc
