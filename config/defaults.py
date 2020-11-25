@@ -2,7 +2,7 @@ from yacs.config import CfgNode as CN
 _C = CN()
 _C.MODEL = CN()
 _C.MODEL.DEVICE_ID = '0'
-_C.MODEL.NAME = 'efficientnet_b5'
+_C.MODEL.NAME = 'resnest50'
 _C.MODEL.METRIC_LOSS_TYPE = 'ce_center'
 _C.MODEL.IF_LABELSMOOTH = 'on'
 _C.MODEL.POOLING_METHOD = 'GeM'
@@ -106,7 +106,6 @@ _C.SOLVER.FP16 = False
 _C.SOLVER.IMS_PER_BATCH = 16
 _C.SOLVER.SEED = 1234
 _C.SOLVER.GRADCENTER = False
-_C.SOLVER.HARD_FACTOR = 0.0
 
 # ---------------------------------------------------------------------------- #
 # Misc options

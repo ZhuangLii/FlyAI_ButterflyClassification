@@ -57,7 +57,7 @@ def mixup_criterion(criterion, pred, feat, y_a, y_b, lam):
     cen_loss = cen_loss_a + cen_loss_b
     return all_loss, id_loss, cen_loss
 
-def train_epoch(cfg, model, loader, optimizer, optimizer_center, center_criterion, loss_fun, epoch, n_epochs, grid, writer, logger, print_freq=20):
+def train_epoch(cfg, model, loader, optimizer, optimizer_center, center_criterion, loss_fun, epoch, n_epochs, grid, writer, logger, print_freq=50):
     batch_time = AverageMeter()
     losses = AverageMeter()
     losses_id = AverageMeter()
@@ -68,6 +68,8 @@ def train_epoch(cfg, model, loader, optimizer, optimizer_center, center_criterio
     model.train()
     grid.set_prob(epoch, cfg.SOLVER.MAX_EPOCHS)
     end = time.time()
+    writer.add_scalar(
+            'data/lr', optimizer.param_groups[0]['lr'] , epoch)
     for batch_idx, (input, target) in enumerate(loader):
         # Create vaiables
         optimizer.zero_grad()
@@ -100,13 +102,13 @@ def train_epoch(cfg, model, loader, optimizer, optimizer_center, center_criterio
         else:
             losses_center.update(cen_loss.item(), batch_size)
         writer.add_scalar(
-            'data/loss',  losses.avg, (epoch-1)*len(loader) + batch_idx)
+            'data/loss',  losses.avg, (epoch)*len(loader) + batch_idx)
         writer.add_scalar(
-            'data/loss_id',  losses_id.avg, (epoch-1)*len(loader) + batch_idx)
+            'data/loss_id',  losses_id.avg, (epoch)*len(loader) + batch_idx)
         writer.add_scalar(
-            'data/loss_center',  losses_center.avg, (epoch-1)*len(loader) + batch_idx)
+            'data/loss_center',  losses_center.avg, (epoch)*len(loader) + batch_idx)
         writer.add_scalar(
-            'data/train_error',  error.avg, (epoch-1)*len(loader) + batch_idx)
+            'data/train_error',  error.avg, (epoch)*len(loader) + batch_idx)
         # compute gradient and do SGD step
         all_loss.backward()
         optimizer.step()
@@ -120,7 +122,6 @@ def train_epoch(cfg, model, loader, optimizer, optimizer_center, center_criterio
         end = time.time()
 
         # print stats
-        train_log(train_loss=losses.val, train_acc=error.val)
         if batch_idx % print_freq == 0:
             res = '\t'.join([
                 'Epoch: [%d/%d]' % (epoch + 1, n_epochs),
@@ -129,8 +130,8 @@ def train_epoch(cfg, model, loader, optimizer, optimizer_center, center_criterio
                 'Loss %.4f (%.4f)' % (losses.val, losses.avg),
                 'Error %.4f (%.4f)' % (error.val, error.avg),
             ])
+            train_log(train_loss=losses.val, train_acc=error.val)
             logger.info(res)
-
     # Return summary statistics
     return batch_time.avg, losses.avg, error.avg
 
@@ -236,4 +237,4 @@ def train_val_fun(cfg, model, train_loader, valid_loader,
                     cfg.OUTPUT_DIR, 'model.pth'))
     if not val:
         torch.save(model.state_dict(), os.path.join(
-                    cfg.OUTPUT_DIR, 'model.pth'))
+                    cfg.OUTPUT_DIR, cfg.MODEL.NAME + '.pth'))

@@ -622,7 +622,8 @@ def load_pretrained_weights(model, model_name, weights_path=None, load_fc=True, 
     # from flyai.utils import remote_helper
     # path = remote_helper.get_remote_date('https://www.flyai.com/m/efficientnet-b5-b6417697.pth')
     import os
-    os.system("wget https://www.flyai.com/m/efficientnet-b5-b6417697.pth")
+    if not os.path.exists('./efficientnet-b5-b6417697.pth'):
+        os.system("wget https://www.flyai.com/m/efficientnet-b5-b6417697.pth")
     state_dict = torch.load('./efficientnet-b5-b6417697.pth')
     if load_fc:
         ret = model.load_state_dict(state_dict, strict=False)

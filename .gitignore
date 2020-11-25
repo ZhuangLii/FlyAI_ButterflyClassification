@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-!.gitignore
 data/
 *.pth
-=======
-data/
-efficientnet-b5-b6417697.pth
->>>>>>> 3020a7ce171733d14b905c20477b48cd937047d0
+libs/__pycache__/
+configs/__pycache__/
+log/
 *.pyc
-*.jpg

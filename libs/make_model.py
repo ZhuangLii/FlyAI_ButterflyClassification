@@ -7,6 +7,8 @@ from libs.resnet_ibn_a import resnet50_ibn_a, resnet101_ibn_a
 from libs.se_resnet_ibn_a import se_resnet101_ibn_a
 from libs.efficientnet import *
 from libs.metric_learning import *
+from libs.resnest import resnest50,resnest101,resnest200, resnest269
+from libs.se_resnext import seresnext50_32x4d
 
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
@@ -81,12 +83,22 @@ class Backbone(nn.Module):
             self.base = EfficientNet.from_pretrained('efficientnet-b3')
         elif model_name == 'efficientnet_b4':
             self.base = EfficientNet.from_pretrained('efficientnet-b4')
-        elif model_name == 'efficientnet_b5':
+        elif model_name == 'efficientnet_b5': # 456
             self.base = EfficientNet.from_pretrained('efficientnet-b5')
         elif model_name == 'efficientnet_b6':
             self.base = EfficientNet.from_pretrained('efficientnet-b6')
-        elif model_name == 'efficientnet_b7':
+        elif model_name == 'efficientnet_b7': # 600
             self.base = EfficientNet.from_pretrained('efficientnet-b7')
+        elif model_name == 'resnest50':
+            self.base = resnest50()
+        elif model_name == 'resnest101':
+            self.base = resnest101()
+        elif model_name == 'resnest200': # 320
+            self.base = resnest200()
+        elif model_name == 'resnest269': #460
+            self.base = resnest269()
+        elif model_name == 'seresnext50':
+            self.base = seresnext50_32x4d() #224
         else:
             print('unsupported backbone! but got {}'.format(model_name))
         # self.base.apply(weights_init_kaiming)
@@ -136,7 +148,7 @@ class Backbone(nn.Module):
             self.classifier = nn.Linear(
                 self.in_planes, self.num_classes, bias=False)
             self.classifier.apply(weights_init_classifier)
-        
+
     def DualPath_fun(self, x):
         batch_size = x.size(0)
         x = x.view(batch_size, self.cfg.MODEL.FEAT_SIZE, x.size(2) ** 2)
