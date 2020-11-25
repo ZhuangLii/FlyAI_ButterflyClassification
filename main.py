@@ -95,7 +95,6 @@ class Main(FlyAI):
         '''
         config_file = ['./configs/'+args.CONFIG]
         self.cfg.merge_from_file(config_file)
-        cfg.merge_from_list(self.args.opts)
         logger.info("Running with config:\n{}".format(self.cfg))
         train_loader, valid_loader, num_class = make_dataloader(self.cfg)
         model = make_model(self.cfg, num_class)
@@ -129,8 +128,6 @@ if __name__ == '__main__':
     parser.add_argument("-e", "--EPOCHS", default=20, type=int, help="train epochs")
     parser.add_argument("-b", "--BATCH", default=2, type=int, help="batch size")
     parser.add_argument("-c", "--CONFIG", default='efficientb5.yaml', type=str, help="batch size")
-    parser.add_argument("opts", help="Modify config options using the command-line", default=None,
-                        nargs=argparse.REMAINDER)
     congfig_files = {'se_resnext.yaml','resnest.yaml','efficientnetb5.yaml'}
     args = parser.parse_args()
     for file_name in congfig_files:
