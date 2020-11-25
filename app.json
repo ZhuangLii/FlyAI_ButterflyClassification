@@ -27,8 +27,8 @@
     "source":[
       {
         "id":"ButterflyClassification", 
-        "name":"ButterflyClassification", 
-        "source":"ButterflyClassification"
+        "name":"200种蝴蝶分类", 
+        "source":"数据来源网络"
       }
     ]
   }, 

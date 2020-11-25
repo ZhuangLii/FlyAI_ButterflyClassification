@@ -22,7 +22,7 @@ class Prediction(FlyAI):
         cfg.OUTPUT_DIR = MODEL_PATH
         cfg.DATASETS.ROOT_DIR = os.path.join(sys.path[0], 'data', 'input', DataID)
         self.models = []
-        config_files = ['./configs/efficientnetb7.yaml']
+        config_files = ['./configs/efficientnetb7.yaml', './configs/resnest.yaml', './configs/se_resnext.yaml']
         for config_file in config_files:
             cfg.merge_from_file(config_file)
             model = make_model(cfg, 200)
@@ -56,7 +56,7 @@ class Prediction(FlyAI):
             img = img.unsqueeze(0)
             img = img.cuda()
             with torch.no_grad():
-                output = tta.fliplr_image2label(submodel, img)
+                output = tta.d4_image2label(submodel, img)
                 outputs.append(output)
         final = torch.mean(torch.stack(outputs, 0), 0)
         _,pred = torch.max(final,1)

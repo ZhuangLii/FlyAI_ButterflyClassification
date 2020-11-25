@@ -93,36 +93,35 @@ class Main(FlyAI):
         训练模型，必须实现此方法
         :return:
         '''
-        config_files = ['./configs/'+args.CONFIG]
-        for configs in config_files:
-            self.cfg.merge_from_file(configs)
-            cfg.merge_from_list(self.args.opts)
-            logger.info("Running with config:\n{}".format(self.cfg))
-            train_loader, valid_loader, num_class = make_dataloader(self.cfg)
-            model = make_model(self.cfg, num_class)
-            loss_func, center_criterion = make_loss(self.cfg, num_class)
-            optimizer, optimizer_center = make_optimizer(
-                cfg, model, center_criterion)
-            if cfg.SOLVER.TYPE == 'warmup':
-                scheduler = WarmupMultiStepLR(optimizer, self.cfg.SOLVER.STEPS, self.cfg.SOLVER.GAMMA,
-                                    self.cfg.SOLVER.WARMUP_FACTOR,
-                                    self.cfg.SOLVER.WARMUP_EPOCHS, self.cfg.SOLVER.WARMUP_METHOD)
-            elif cfg.SOLVER.TYPE == 'warmup_exp':
-                scheduler_exp = lr_scheduler.ExponentialLR(optimizer, gamma=0.85)
-                scheduler = GradualWarmupScheduler(
-                    optimizer, multiplier=10, total_epoch=self.cfg.SOLVER.WARMUP_EPOCHS, after_scheduler=scheduler_exp)
-            elif cfg.SOLVER.TYPE == 'warmup_cos':
-                scheduler = WarmupCosineLR(optimizer,
-                                            max_iters=cfg.SOLVER.MAX_EPOCHS,
-                                            warmup_factor= 0.001,
-                                            warmup_iters=cfg.SOLVER.WARMUP_EPOCHS
-                                        )
-            if not os.path.exists(self.cfg.TBOUTPUT_DIR):
-                os.mkdir(self.cfg.TBOUTPUT_DIR)
-            writer = SummaryWriter(self.cfg.TBOUTPUT_DIR, filename_suffix=cfg.MODEL.NAME)
-            self.logger.info('start training')
-            train_val_fun(self.cfg, model, train_loader, valid_loader,loss_func, center_criterion, scheduler, optimizer, optimizer_center, writer, self.logger, val=cfg.IF_VAL) 
-            torch.cuda.empty_cache()
+        config_file = ['./configs/'+args.CONFIG]
+        self.cfg.merge_from_file(config_file)
+        cfg.merge_from_list(self.args.opts)
+        logger.info("Running with config:\n{}".format(self.cfg))
+        train_loader, valid_loader, num_class = make_dataloader(self.cfg)
+        model = make_model(self.cfg, num_class)
+        loss_func, center_criterion = make_loss(self.cfg, num_class)
+        optimizer, optimizer_center = make_optimizer(
+            cfg, model, center_criterion)
+        if cfg.SOLVER.TYPE == 'warmup':
+            scheduler = WarmupMultiStepLR(optimizer, self.cfg.SOLVER.STEPS, self.cfg.SOLVER.GAMMA,
+                                self.cfg.SOLVER.WARMUP_FACTOR,
+                                self.cfg.SOLVER.WARMUP_EPOCHS, self.cfg.SOLVER.WARMUP_METHOD)
+        elif cfg.SOLVER.TYPE == 'warmup_exp':
+            scheduler_exp = lr_scheduler.ExponentialLR(optimizer, gamma=0.85)
+            scheduler = GradualWarmupScheduler(
+                optimizer, multiplier=10, total_epoch=self.cfg.SOLVER.WARMUP_EPOCHS, after_scheduler=scheduler_exp)
+        elif cfg.SOLVER.TYPE == 'warmup_cos':
+            scheduler = WarmupCosineLR(optimizer,
+                                        max_iters=cfg.SOLVER.MAX_EPOCHS,
+                                        warmup_factor= 0.001,
+                                        warmup_iters=cfg.SOLVER.WARMUP_EPOCHS
+                                    )
+        if not os.path.exists(self.cfg.TBOUTPUT_DIR):
+            os.mkdir(self.cfg.TBOUTPUT_DIR)
+        writer = SummaryWriter(self.cfg.TBOUTPUT_DIR, filename_suffix=cfg.MODEL.NAME)
+        self.logger.info('start training')
+        train_val_fun(self.cfg, model, train_loader, valid_loader,loss_func, center_criterion, scheduler, optimizer, optimizer_center, writer, self.logger, val=cfg.IF_VAL) 
+        torch.cuda.empty_cache()
 
 
 if __name__ == '__main__':
@@ -132,10 +131,11 @@ if __name__ == '__main__':
     parser.add_argument("-c", "--CONFIG", default='efficientb5.yaml', type=str, help="batch size")
     parser.add_argument("opts", help="Modify config options using the command-line", default=None,
                         nargs=argparse.REMAINDER)
-
+    congfig_files = {'se_resnext.yaml','resnest.yaml','efficientnetb5.yaml'}
     args = parser.parse_args()
-    logger = setup_logger("butterfly", './log')
-    # cfg.freeze()
-    main = Main(args, logger)
-    main.download_data()
-    main.train()
+    for file_name in congfig_files:
+        args.CONFIG = file_name
+        logger = setup_logger("butterfly", './log')
+        main = Main(args, logger)
+        main.download_data()
+        main.train()

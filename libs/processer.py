@@ -236,5 +236,7 @@ def train_val_fun(cfg, model, train_loader, valid_loader,
                 torch.save(model.state_dict(), os.path.join(
                     cfg.OUTPUT_DIR, 'model.pth'))
     if not val:
+        if not os.path.exists(cfg.OUTPUT_DIR):
+            os.mkdir(cfg.OUTPUT_DIR)
         torch.save(model.state_dict(), os.path.join(
                     cfg.OUTPUT_DIR, cfg.MODEL.NAME + '.pth'))

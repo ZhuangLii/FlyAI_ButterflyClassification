@@ -42,7 +42,6 @@ _C.INPUT.GRAY_RPO = 0.05
 _C.DATASETS = CN()
 _C.DATASETS.ROOT_DIR = ('./data/input/ButterflyClassification/')
 _C.DATASETS.HARD_AUG = 'auto'
-_C.DATASETS.TRAIN_LABEL_PATH = ('./data/input/ButterflyClassification/tran.csv')
 # Solver
 # ---------------------------------------------------------------------------- #
 _C.SOLVER = CN()
