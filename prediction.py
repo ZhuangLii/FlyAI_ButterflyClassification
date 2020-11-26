@@ -22,7 +22,7 @@ class Prediction(FlyAI):
         cfg.OUTPUT_DIR = MODEL_PATH
         cfg.DATASETS.ROOT_DIR = os.path.join(sys.path[0], 'data', 'input', DataID)
         self.models = []
-        config_files = ['./configs/efficientnetb7.yaml', './configs/resnest.yaml', './configs/se_resnext.yaml']
+        config_files = ['./configs/efficientnetb5.yaml', './configs/resnest.yaml', './configs/se_resnext.yaml']
         for config_file in config_files:
             cfg.merge_from_file(config_file)
             model = make_model(cfg, 200)
@@ -77,7 +77,7 @@ if __name__ == "__main__":
                 continue
             img, name = line.rstrip().split(',')
             img = img.split('/')[1]
-            img = join('./input/ButterflyClassification/image', img)
+            img = join('./data/input/ButterflyClassification/image', img)
             pred_name = p.predict(img)
             if pred_name == name:
                 correct += 1

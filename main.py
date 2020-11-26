@@ -93,7 +93,7 @@ class Main(FlyAI):
         训练模型，必须实现此方法
         :return:
         '''
-        config_file = ['./configs/'+args.CONFIG]
+        config_file = './configs/'+args.CONFIG
         self.cfg.merge_from_file(config_file)
         logger.info("Running with config:\n{}".format(self.cfg))
         train_loader, valid_loader, num_class = make_dataloader(self.cfg)
